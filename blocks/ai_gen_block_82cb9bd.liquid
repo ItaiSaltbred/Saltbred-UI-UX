@@ -1,0 +1,255 @@
+{% doc %}
+  @prompt
+    Generate a background with big words and an image inside of those words. Make it say "way of life." , I only want to see the image in the words. I don't want to see a white something blocking and I want to be able to put another background behind the words 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-text-image-clip-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    position: relative;
+    padding: {{ block.settings.padding_top }}px 20px {{ block.settings.padding_bottom }}px;
+    overflow: hidden;
+  }
+
+  .ai-text-image-clip__container-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ai-text-image-clip__text-{{ ai_gen_id }} {
+    font-family: {{ block.settings.text_font.family }}, {{ block.settings.text_font.fallback_families }};
+    font-weight: {{ block.settings.text_font.weight }};
+    font-size: {{ block.settings.font_size }}px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+    background-image: url('{{ block.settings.clip_image | image_url: width: 2000 }}');
+    background-size: cover;
+    background-position: {{ block.settings.image_position_x }}% {{ block.settings.image_position_y }}%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  .ai-text-image-clip__placeholder-{{ ai_gen_id }} {
+    font-family: {{ block.settings.text_font.family }}, {{ block.settings.text_font.fallback_families }};
+    font-weight: {{ block.settings.text_font.weight }};
+    font-size: {{ block.settings.font_size }}px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+    color: {{ block.settings.placeholder_color }};
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    position: relative;
+  }
+
+  .ai-text-image-clip__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-text-image-clip__text-{{ ai_gen_id }},
+    .ai-text-image-clip__placeholder-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size_mobile }}px;
+    }
+
+    .ai-text-image-clip-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_top_mobile }}px 15px {{ block.settings.padding_bottom_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<div
+  class="ai-text-image-clip-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-text-image-clip__container-{{ ai_gen_id }}">
+    {% if block.settings.clip_image %}
+      <h2 class="ai-text-image-clip__text-{{ ai_gen_id }}">
+        {{ block.settings.text }}
+      </h2>
+    {% else %}
+      <div style="position: relative;">
+        <h2 class="ai-text-image-clip__placeholder-{{ ai_gen_id }}">
+          {{ block.settings.text }}
+        </h2>
+        <div class="ai-text-image-clip__empty-state-{{ ai_gen_id }}">
+          Next, add an image to clip inside the text
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Text image clip",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "way of life"
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Font",
+      "default": "inter_n7"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Desktop font size",
+      "min": 40,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Mobile font size",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": -5,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "clip_image",
+      "label": "Clip image"
+    },
+    {
+      "type": "range",
+      "id": "image_position_x",
+      "label": "Image horizontal position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "image_position_y",
+      "label": "Image vertical position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder text color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text image clip"
+    }
+  ]
+}
+{% endschema %}

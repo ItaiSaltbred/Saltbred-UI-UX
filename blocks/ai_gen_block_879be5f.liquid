@@ -1,0 +1,401 @@
+{% doc %}
+  @prompt
+    Create a product information section with three collapsible accordion drop-down boxes. The first accordion should be labeled "Product Description" for product details, the second "Size Chart" for sizing information, and the third "Return Policy" for return information. Each accordion should expand and collapse when clicked, with customizable content fields for each section. Style should be clean and mobile-friendly with clear visual indicators for expand/collapse state.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-accordion-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ai-product-accordion__item-{{ ai_gen_id }} {
+    border-bottom: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-product-accordion__item-{{ ai_gen_id }}:first-child {
+    border-top: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-product-accordion__button-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: {{ block.settings.item_padding }}px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+
+  .ai-product-accordion__button-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.heading_hover_color }};
+  }
+
+  .ai-product-accordion__icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    color: {{ block.settings.icon_color }};
+  }
+
+  .ai-product-accordion__button-{{ ai_gen_id }}[aria-expanded="true"] .ai-product-accordion__icon-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-product-accordion__content-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .ai-product-accordion__content-{{ ai_gen_id }}.active {
+    max-height: 2000px;
+  }
+
+  .ai-product-accordion__content-inner-{{ ai_gen_id }} {
+    padding-bottom: {{ block.settings.item_padding }}px;
+    color: {{ block.settings.content_color }};
+    font-size: {{ block.settings.content_size }}px;
+    line-height: 1.6;
+  }
+
+  .ai-product-accordion__content-inner-{{ ai_gen_id }} p {
+    margin: 0 0 12px 0;
+  }
+
+  .ai-product-accordion__content-inner-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-product-accordion__content-inner-{{ ai_gen_id }} ul,
+  .ai-product-accordion__content-inner-{{ ai_gen_id }} ol {
+    margin: 0 0 12px 0;
+    padding-left: 20px;
+  }
+
+  .ai-product-accordion__content-inner-{{ ai_gen_id }} li {
+    margin-bottom: 8px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-accordion__button-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.9 }}px;
+    }
+
+    .ai-product-accordion__content-inner-{{ ai_gen_id }} {
+      font-size: {{ block.settings.content_size | times: 0.95 }}px;
+    }
+  }
+{% endstyle %}
+
+<product-accordion-{{ ai_gen_id }}
+  class="ai-product-accordion-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-product-accordion__item-{{ ai_gen_id }}">
+    <button
+      class="ai-product-accordion__button-{{ ai_gen_id }}"
+      aria-expanded="{% if block.settings.description_open_default %}true{% else %}false{% endif %}"
+      aria-controls="accordion-description-{{ ai_gen_id }}"
+    >
+      <span>{{ block.settings.description_heading }}</span>
+      <svg
+        class="ai-product-accordion__icon-{{ ai_gen_id }}"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+    <div
+      id="accordion-description-{{ ai_gen_id }}"
+      class="ai-product-accordion__content-{{ ai_gen_id }} {% if block.settings.description_open_default %}active{% endif %}"
+    >
+      <div class="ai-product-accordion__content-inner-{{ ai_gen_id }}">
+        {% if block.settings.description_content != blank %}
+          {{ block.settings.description_content }}
+        {% elsif product.description != blank %}
+          {{ product.description }}
+        {% else %}
+          <p>Add product description content here.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-product-accordion__item-{{ ai_gen_id }}">
+    <button
+      class="ai-product-accordion__button-{{ ai_gen_id }}"
+      aria-expanded="{% if block.settings.size_chart_open_default %}true{% else %}false{% endif %}"
+      aria-controls="accordion-size-chart-{{ ai_gen_id }}"
+    >
+      <span>{{ block.settings.size_chart_heading }}</span>
+      <svg
+        class="ai-product-accordion__icon-{{ ai_gen_id }}"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+    <div
+      id="accordion-size-chart-{{ ai_gen_id }}"
+      class="ai-product-accordion__content-{{ ai_gen_id }} {% if block.settings.size_chart_open_default %}active{% endif %}"
+    >
+      <div class="ai-product-accordion__content-inner-{{ ai_gen_id }}">
+        {% if block.settings.size_chart_content != blank %}
+          {{ block.settings.size_chart_content }}
+        {% else %}
+          <p>Add size chart information here.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-product-accordion__item-{{ ai_gen_id }}">
+    <button
+      class="ai-product-accordion__button-{{ ai_gen_id }}"
+      aria-expanded="{% if block.settings.return_policy_open_default %}true{% else %}false{% endif %}"
+      aria-controls="accordion-return-policy-{{ ai_gen_id }}"
+    >
+      <span>{{ block.settings.return_policy_heading }}</span>
+      <svg
+        class="ai-product-accordion__icon-{{ ai_gen_id }}"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+    <div
+      id="accordion-return-policy-{{ ai_gen_id }}"
+      class="ai-product-accordion__content-{{ ai_gen_id }} {% if block.settings.return_policy_open_default %}active{% endif %}"
+    >
+      <div class="ai-product-accordion__content-inner-{{ ai_gen_id }}">
+        {% if block.settings.return_policy_content != blank %}
+          {{ block.settings.return_policy_content }}
+        {% elsif shop.refund_policy.body != blank %}
+          {{ shop.refund_policy.body }}
+        {% else %}
+          <p>Add return policy information here.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</product-accordion-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ProductAccordion{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.buttons = this.querySelectorAll('.ai-product-accordion__button-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.buttons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const isExpanded = button.getAttribute('aria-expanded') === 'true';
+            const contentId = button.getAttribute('aria-controls');
+            const content = document.getElementById(contentId);
+
+            button.setAttribute('aria-expanded', !isExpanded);
+            
+            if (isExpanded) {
+              content.classList.remove('active');
+            } else {
+              content.classList.add('active');
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('product-accordion-{{ ai_gen_id }}', ProductAccordion{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product accordion",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product description"
+    },
+    {
+      "type": "text",
+      "id": "description_heading",
+      "label": "Heading",
+      "default": "Product Description"
+    },
+    {
+      "type": "richtext",
+      "id": "description_content",
+      "label": "Content",
+      "info": "Leave empty to use product description"
+    },
+    {
+      "type": "checkbox",
+      "id": "description_open_default",
+      "label": "Open by default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Size chart"
+    },
+    {
+      "type": "text",
+      "id": "size_chart_heading",
+      "label": "Heading",
+      "default": "Size Chart"
+    },
+    {
+      "type": "richtext",
+      "id": "size_chart_content",
+      "label": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "size_chart_open_default",
+      "label": "Open by default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Return policy"
+    },
+    {
+      "type": "text",
+      "id": "return_policy_heading",
+      "label": "Heading",
+      "default": "Return Policy"
+    },
+    {
+      "type": "richtext",
+      "id": "return_policy_content",
+      "label": "Content",
+      "info": "Leave empty to use shop refund policy"
+    },
+    {
+      "type": "checkbox",
+      "id": "return_policy_open_default",
+      "label": "Open by default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "item_padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Item padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "content_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Content size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "heading_hover_color",
+      "label": "Heading hover",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Content",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product accordion"
+    }
+  ]
+}
+{% endschema %}

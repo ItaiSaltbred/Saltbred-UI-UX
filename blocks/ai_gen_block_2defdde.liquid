@@ -1,0 +1,302 @@
+{% doc %}
+  @prompt
+    I want the collection image to be here at the top. And in the middle I wanted to say "Coastal Snapback." , Can you just make it fit horizontally? 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-collection-hero-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    display: block;
+  }
+
+  .ai-collection-hero-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.image_height }}px;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-collection-hero-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-collection-hero-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-collection-hero-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-collection-hero-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.overlay_color }};
+    opacity: {{ block.settings.overlay_opacity }};
+    pointer-events: none;
+  }
+
+  .ai-collection-hero-text-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 90%;
+    z-index: 2;
+  }
+
+  .ai-collection-hero-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: {{ block.settings.title_weight }};
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    text-transform: {{ block.settings.text_transform }};
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-collection-hero-image-wrapper-{{ ai_gen_id }} {
+      height: {{ block.settings.mobile_image_height }}px;
+    }
+
+    .ai-collection-hero-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_title_size }}px;
+    }
+  }
+{% endstyle %}
+
+<collection-hero-{{ ai_gen_id }}
+  class="ai-collection-hero-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-collection-hero-image-wrapper-{{ ai_gen_id }}">
+    {% if collection.image %}
+      <img
+        src="{{ collection.image | image_url: width: 2000 }}"
+        alt="{{ collection.image.alt | escape }}"
+        loading="lazy"
+        width="{{ collection.image.width }}"
+        height="{{ collection.image.height }}"
+        class="ai-collection-hero-image-{{ ai_gen_id }}"
+      >
+    {% elsif collection.products.first.featured_image %}
+      <img
+        src="{{ collection.products.first.featured_image | image_url: width: 2000 }}"
+        alt="{{ collection.products.first.featured_image.alt | escape }}"
+        loading="lazy"
+        width="{{ collection.products.first.featured_image.width }}"
+        height="{{ collection.products.first.featured_image.height }}"
+        class="ai-collection-hero-image-{{ ai_gen_id }}"
+      >
+    {% else %}
+      <div class="ai-collection-hero-placeholder-{{ ai_gen_id }}">
+        {{ 'collection-apparel-1' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+
+    <div class="ai-collection-hero-overlay-{{ ai_gen_id }}"></div>
+
+    <div class="ai-collection-hero-text-{{ ai_gen_id }}">
+      <h1 class="ai-collection-hero-title-{{ ai_gen_id }}">
+        {% if block.settings.custom_title != blank %}
+          {{ block.settings.custom_title }}
+        {% else %}
+          {{ collection.title }}
+        {% endif %}
+      </h1>
+    </div>
+  </div>
+</collection-hero-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CollectionHero{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.style.display = 'block';
+      }
+    }
+
+    customElements.define('collection-hero-{{ ai_gen_id }}', CollectionHero{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Collection hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "custom_title",
+      "label": "Custom title",
+      "info": "Leave blank to use collection title"
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text style",
+      "options": [
+        {
+          "value": "none",
+          "label": "Normal"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "label": "Desktop image height",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_height",
+      "label": "Mobile image height",
+      "min": 150,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Desktop title size",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "mobile_title_size",
+      "label": "Mobile title size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.3
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection hero"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,261 @@
+{% doc %}
+  @prompt
+    Create a product page block that displays a green indicator badge showing "In Stock" when the selected product variant has available inventory, and a grey or red indicator showing "Out of Stock" when it's unavailable. The badge should include a small green circle/dot next to the "In Stock" text, styled to look premium and minimal. It should update dynamically when the customer switches variants.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-stock-indicator-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: {{ block.settings.border_radius }}px;
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}--in-stock {
+    background-color: {{ block.settings.in_stock_bg_color }};
+    color: {{ block.settings.in_stock_text_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.in_stock_border_color }};
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}--out-of-stock {
+    background-color: {{ block.settings.out_of_stock_bg_color }};
+    color: {{ block.settings.out_of_stock_text_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.out_of_stock_border_color }};
+  }
+
+  .ai-stock-indicator-dot-{{ ai_gen_id }} {
+    width: {{ block.settings.dot_size }}px;
+    height: {{ block.settings.dot_size }}px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .ai-stock-indicator-dot-{{ ai_gen_id }}--in-stock {
+    background-color: {{ block.settings.in_stock_dot_color }};
+  }
+
+  .ai-stock-indicator-dot-{{ ai_gen_id }}--out-of-stock {
+    background-color: {{ block.settings.out_of_stock_dot_color }};
+  }
+
+  .ai-stock-indicator-text-{{ ai_gen_id }} {
+    line-height: 1;
+  }
+{% endstyle %}
+
+<stock-indicator-{{ ai_gen_id }}
+  class="ai-stock-indicator-{{ ai_gen_id }} {% if product.selected_or_first_available_variant.available %}ai-stock-indicator-{{ ai_gen_id }}--in-stock{% else %}ai-stock-indicator-{{ ai_gen_id }}--out-of-stock{% endif %}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  <span class="ai-stock-indicator-dot-{{ ai_gen_id }} {% if product.selected_or_first_available_variant.available %}ai-stock-indicator-dot-{{ ai_gen_id }}--in-stock{% else %}ai-stock-indicator-dot-{{ ai_gen_id }}--out-of-stock{% endif %}"></span>
+  <span class="ai-stock-indicator-text-{{ ai_gen_id }}">
+    {% if product.selected_or_first_available_variant.available %}
+      {{ block.settings.in_stock_text }}
+    {% else %}
+      {{ block.settings.out_of_stock_text }}
+    {% endif %}
+  </span>
+</stock-indicator-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StockIndicator{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.productId = this.dataset.productId;
+      }
+
+      connectedCallback() {
+        this.setupVariantListener();
+      }
+
+      setupVariantListener() {
+        const productForm = document.querySelector(`product-form[data-product-id="${this.productId}"]`);
+        
+        if (productForm) {
+          productForm.addEventListener('variant-change', (event) => {
+            this.updateStockStatus(event.detail.variant);
+          });
+        }
+
+        document.addEventListener('variant:change', (event) => {
+          if (event.detail && event.detail.variant) {
+            this.updateStockStatus(event.detail.variant);
+          }
+        });
+      }
+
+      updateStockStatus(variant) {
+        if (!variant) return;
+
+        const isAvailable = variant.available;
+        const dotElement = this.querySelector('.ai-stock-indicator-dot-{{ ai_gen_id }}');
+        const textElement = this.querySelector('.ai-stock-indicator-text-{{ ai_gen_id }}');
+
+        if (isAvailable) {
+          this.classList.remove('ai-stock-indicator-{{ ai_gen_id }}--out-of-stock');
+          this.classList.add('ai-stock-indicator-{{ ai_gen_id }}--in-stock');
+          
+          dotElement.classList.remove('ai-stock-indicator-dot-{{ ai_gen_id }}--out-of-stock');
+          dotElement.classList.add('ai-stock-indicator-dot-{{ ai_gen_id }}--in-stock');
+          
+          textElement.textContent = '{{ block.settings.in_stock_text }}';
+        } else {
+          this.classList.remove('ai-stock-indicator-{{ ai_gen_id }}--in-stock');
+          this.classList.add('ai-stock-indicator-{{ ai_gen_id }}--out-of-stock');
+          
+          dotElement.classList.remove('ai-stock-indicator-dot-{{ ai_gen_id }}--in-stock');
+          dotElement.classList.add('ai-stock-indicator-dot-{{ ai_gen_id }}--out-of-stock');
+          
+          textElement.textContent = '{{ block.settings.out_of_stock_text }}';
+        }
+      }
+    }
+
+    customElements.define('stock-indicator-{{ ai_gen_id }}', StockIndicator{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Stock indicator",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "In stock"
+    },
+    {
+      "type": "text",
+      "id": "in_stock_text",
+      "label": "Text",
+      "default": "In Stock"
+    },
+    {
+      "type": "color",
+      "id": "in_stock_bg_color",
+      "label": "Background",
+      "default": "#E8F5E9"
+    },
+    {
+      "type": "color",
+      "id": "in_stock_text_color",
+      "label": "Text",
+      "default": "#2E7D32"
+    },
+    {
+      "type": "color",
+      "id": "in_stock_border_color",
+      "label": "Border",
+      "default": "#A5D6A7"
+    },
+    {
+      "type": "color",
+      "id": "in_stock_dot_color",
+      "label": "Dot",
+      "default": "#4CAF50"
+    },
+    {
+      "type": "header",
+      "content": "Out of stock"
+    },
+    {
+      "type": "text",
+      "id": "out_of_stock_text",
+      "label": "Text",
+      "default": "Out of Stock"
+    },
+    {
+      "type": "color",
+      "id": "out_of_stock_bg_color",
+      "label": "Background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "out_of_stock_text_color",
+      "label": "Text",
+      "default": "#757575"
+    },
+    {
+      "type": "color",
+      "id": "out_of_stock_border_color",
+      "label": "Border",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "color",
+      "id": "out_of_stock_dot_color",
+      "label": "Dot",
+      "default": "#9E9E9E"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "dot_size",
+      "label": "Dot size",
+      "min": 6,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stock indicator"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,320 @@
+{% doc %}
+  @prompt
+    Create a promotional pop-up that appears on page load. The pop-up should display a full image (provided via a theme setting/image picker) as its main content — the image already contains all the promotional text so no additional headline or body text is needed. Include a close/dismiss button (X) in the top right corner. The pop-up should be centered on screen with a dark semi-transparent overlay behind it. It should be mobile-friendly and sized appropriately for portrait images. No email capture, no form fields. The image URL to use as default is: https://cdn.shopify.com/s/files/1/0957/6051/5348/files/Stickerpopup.png?v=1776807454
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-promo-popup-{{ ai_gen_id }} {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .ai-promo-popup-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-promo-popup-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.overlay_color }};
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+  }
+
+  .ai-promo-popup-container-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90vh;
+    width: auto;
+    z-index: 10000;
+  }
+
+  .ai-promo-popup-content-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-promo-popup-image-{{ ai_gen_id }} {
+    max-width: 100%;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-promo-popup-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: {{ block.settings.close_button_offset }}px;
+    right: {{ block.settings.close_button_offset }}px;
+    width: {{ block.settings.close_button_size }}px;
+    height: {{ block.settings.close_button_size }}px;
+    background-color: {{ block.settings.close_button_bg }};
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .ai-promo-popup-close-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.close_button_hover_bg }};
+    transform: scale(1.1);
+  }
+
+  .ai-promo-popup-close-{{ ai_gen_id }} svg {
+    width: calc({{ block.settings.close_button_size }}px * 0.5);
+    height: calc({{ block.settings.close_button_size }}px * 0.5);
+    stroke: {{ block.settings.close_button_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-promo-popup-container-{{ ai_gen_id }} {
+      max-width: 95%;
+      max-height: 85vh;
+    }
+
+    .ai-promo-popup-image-{{ ai_gen_id }} {
+      max-height: 85vh;
+    }
+
+    .ai-promo-popup-close-{{ ai_gen_id }} {
+      width: {{ block.settings.close_button_size | times: 0.8 }}px;
+      height: {{ block.settings.close_button_size | times: 0.8 }}px;
+      top: {{ block.settings.close_button_offset | times: 0.8 }}px;
+      right: {{ block.settings.close_button_offset | times: 0.8 }}px;
+    }
+
+    .ai-promo-popup-close-{{ ai_gen_id }} svg {
+      width: calc({{ block.settings.close_button_size | times: 0.8 }}px * 0.5);
+      height: calc({{ block.settings.close_button_size | times: 0.8 }}px * 0.5);
+    }
+  }
+{% endstyle %}
+
+<promo-popup-{{ ai_gen_id }}
+  class="ai-promo-popup-{{ ai_gen_id }}"
+  data-delay="{{ block.settings.delay }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-promo-popup-overlay-{{ ai_gen_id }}"></div>
+  <div class="ai-promo-popup-container-{{ ai_gen_id }}">
+    <div class="ai-promo-popup-content-{{ ai_gen_id }}">
+      {% if block.settings.promo_image %}
+        <img
+          src="{{ block.settings.promo_image | image_url: width: 1200 }}"
+          alt="{{ block.settings.promo_image.alt | escape }}"
+          class="ai-promo-popup-image-{{ ai_gen_id }}"
+          loading="eager"
+          width="{{ block.settings.promo_image.width }}"
+          height="{{ block.settings.promo_image.height }}"
+        >
+      {% else %}
+        <img
+          src="https://cdn.shopify.com/s/files/1/0957/6051/5348/files/Stickerpopup.png?v=1776807454"
+          alt="Promotional popup"
+          class="ai-promo-popup-image-{{ ai_gen_id }}"
+          loading="eager"
+        >
+      {% endif %}
+      <button
+        class="ai-promo-popup-close-{{ ai_gen_id }}"
+        aria-label="Close popup"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</promo-popup-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class PromoPopup{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.closeButton = this.querySelector('.ai-promo-popup-close-{{ ai_gen_id }}');
+        this.overlay = this.querySelector('.ai-promo-popup-overlay-{{ ai_gen_id }}');
+        this.delay = parseInt(this.dataset.delay) || 0;
+        this.sessionKey = 'ai-promo-popup-{{ ai_gen_id }}-closed';
+      }
+
+      connectedCallback() {
+        if (this.hasBeenClosed()) {
+          return;
+        }
+
+        setTimeout(() => {
+          this.show();
+        }, this.delay);
+
+        this.closeButton.addEventListener('click', () => this.close());
+        this.overlay.addEventListener('click', () => this.close());
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.classList.contains('active')) {
+            this.close();
+          }
+        });
+      }
+
+      show() {
+        this.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      close() {
+        this.classList.remove('active');
+        document.body.style.overflow = '';
+        sessionStorage.setItem(this.sessionKey, 'true');
+      }
+
+      hasBeenClosed() {
+        return sessionStorage.getItem(this.sessionKey) === 'true';
+      }
+    }
+
+    customElements.define('promo-popup-{{ ai_gen_id }}', PromoPopup{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Promotional popup",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "promo_image",
+      "label": "Promotional image",
+      "info": "Portrait images work best. Default image is used if none selected."
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Popup behavior"
+    },
+    {
+      "type": "range",
+      "id": "delay",
+      "label": "Delay before showing",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 1,
+      "info": "Time in seconds before popup appears"
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "header",
+      "content": "Close button"
+    },
+    {
+      "type": "range",
+      "id": "close_button_size",
+      "label": "Button size",
+      "min": 24,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "close_button_offset",
+      "label": "Button offset",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12,
+      "info": "Distance from top-right corner"
+    },
+    {
+      "type": "color",
+      "id": "close_button_bg",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "close_button_hover_bg",
+      "label": "Hover background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "close_button_color",
+      "label": "Icon color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotional popup"
+    }
+  ]
+}
+{% endschema %}

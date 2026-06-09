@@ -1,0 +1,555 @@
+{% doc %}
+  @prompt
+    Make an in-stock indicator block that updates with my inventory. 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-stock-indicator-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-stock-indicator-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: {{ block.settings.padding }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    {% if block.settings.show_border %}
+      border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    {% endif %}
+  }
+
+  .ai-stock-indicator-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-stock-indicator-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-stock-indicator-content-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-stock-indicator-text-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.text_size }}px;
+    font-weight: {{ block.settings.text_weight }};
+    line-height: 1.4;
+  }
+
+  .ai-stock-indicator-quantity-{{ ai_gen_id }} {
+    margin: 4px 0 0;
+    font-size: {{ block.settings.quantity_text_size }}px;
+    opacity: 0.8;
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.in-stock .ai-stock-indicator-wrapper-{{ ai_gen_id }} {
+    {% if block.settings.in_stock_bg_override %}
+      background-color: {{ block.settings.in_stock_bg_color }};
+    {% endif %}
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.in-stock .ai-stock-indicator-text-{{ ai_gen_id }} {
+    color: {{ block.settings.in_stock_text_color }};
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.in-stock .ai-stock-indicator-icon-{{ ai_gen_id }} svg {
+    fill: {{ block.settings.in_stock_icon_color }};
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.low-stock .ai-stock-indicator-wrapper-{{ ai_gen_id }} {
+    {% if block.settings.low_stock_bg_override %}
+      background-color: {{ block.settings.low_stock_bg_color }};
+    {% endif %}
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.low-stock .ai-stock-indicator-text-{{ ai_gen_id }} {
+    color: {{ block.settings.low_stock_text_color }};
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.low-stock .ai-stock-indicator-icon-{{ ai_gen_id }} svg {
+    fill: {{ block.settings.low_stock_icon_color }};
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.out-of-stock .ai-stock-indicator-wrapper-{{ ai_gen_id }} {
+    {% if block.settings.out_of_stock_bg_override %}
+      background-color: {{ block.settings.out_of_stock_bg_color }};
+    {% endif %}
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.out-of-stock .ai-stock-indicator-text-{{ ai_gen_id }} {
+    color: {{ block.settings.out_of_stock_text_color }};
+  }
+
+  .ai-stock-indicator-{{ ai_gen_id }}.out-of-stock .ai-stock-indicator-icon-{{ ai_gen_id }} svg {
+    fill: {{ block.settings.out_of_stock_icon_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-stock-indicator-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign inventory_quantity = current_variant.inventory_quantity
+  assign inventory_policy = current_variant.inventory_policy
+  assign available = current_variant.available
+
+  if available == false
+    assign stock_status = 'out-of-stock'
+    assign status_text = block.settings.out_of_stock_text
+    assign show_quantity = false
+  elsif inventory_quantity <= block.settings.low_stock_threshold and inventory_quantity > 0
+    assign stock_status = 'low-stock'
+    assign status_text = block.settings.low_stock_text
+    assign show_quantity = block.settings.show_low_stock_quantity
+  else
+    assign stock_status = 'in-stock'
+    assign status_text = block.settings.in_stock_text
+    assign show_quantity = block.settings.show_in_stock_quantity
+  endif
+%}
+
+<stock-indicator-{{ ai_gen_id }}
+  class="ai-stock-indicator-{{ ai_gen_id }} {{ stock_status }}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-stock-indicator-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.show_icon %}
+      <div class="ai-stock-indicator-icon-{{ ai_gen_id }}">
+        {% if stock_status == 'in-stock' %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        {% elsif stock_status == 'low-stock' %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+          </svg>
+        {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-stock-indicator-content-{{ ai_gen_id }}">
+      <p class="ai-stock-indicator-text-{{ ai_gen_id }}">{{ status_text }}</p>
+      {% if show_quantity and inventory_quantity > 0 %}
+        <p class="ai-stock-indicator-quantity-{{ ai_gen_id }}">
+          {{ inventory_quantity }}
+          {% if inventory_quantity == 1 %}
+            {{ block.settings.unit_singular }}
+          {% else %}
+            {{ block.settings.unit_plural }}
+          {% endif %}
+          {{ block.settings.quantity_suffix }}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</stock-indicator-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StockIndicator{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.productId = this.dataset.productId;
+      }
+
+      connectedCallback() {
+        this.setupVariantListener();
+      }
+
+      setupVariantListener() {
+        const variantSelects = document.querySelectorAll('variant-selects, variant-radios');
+        
+        variantSelects.forEach((variantSelector) => {
+          variantSelector.addEventListener('change', (event) => {
+            this.updateStockStatus(event.detail || event.target);
+          });
+        });
+
+        document.addEventListener('variant:change', (event) => {
+          if (event.detail && event.detail.variant) {
+            this.updateStockStatus(event.detail.variant);
+          }
+        });
+      }
+
+      updateStockStatus(data) {
+        let variant = data;
+        
+        if (data.variant) {
+          variant = data.variant;
+        } else if (data.currentTarget) {
+          const form = data.currentTarget.closest('form');
+          if (form) {
+            const formData = new FormData(form);
+            const variantId = formData.get('id');
+            if (variantId) {
+              this.fetchVariantData(variantId);
+              return;
+            }
+          }
+        }
+
+        if (!variant) return;
+
+        const inventory = variant.inventory_quantity || 0;
+        const available = variant.available;
+        const lowStockThreshold = {{ block.settings.low_stock_threshold }};
+
+        this.classList.remove('in-stock', 'low-stock', 'out-of-stock');
+
+        const statusText = this.querySelector('.ai-stock-indicator-text-{{ ai_gen_id }}');
+        const quantityText = this.querySelector('.ai-stock-indicator-quantity-{{ ai_gen_id }}');
+
+        if (!available) {
+          this.classList.add('out-of-stock');
+          if (statusText) statusText.textContent = '{{ block.settings.out_of_stock_text }}';
+          if (quantityText) quantityText.style.display = 'none';
+        } else if (inventory <= lowStockThreshold && inventory > 0) {
+          this.classList.add('low-stock');
+          if (statusText) statusText.textContent = '{{ block.settings.low_stock_text }}';
+          
+          if (quantityText && {{ block.settings.show_low_stock_quantity | json }}) {
+            const unit = inventory === 1 ? '{{ block.settings.unit_singular }}' : '{{ block.settings.unit_plural }}';
+            quantityText.textContent = `${inventory} ${unit} {{ block.settings.quantity_suffix }}`;
+            quantityText.style.display = 'block';
+          } else if (quantityText) {
+            quantityText.style.display = 'none';
+          }
+        } else {
+          this.classList.add('in-stock');
+          if (statusText) statusText.textContent = '{{ block.settings.in_stock_text }}';
+          
+          if (quantityText && {{ block.settings.show_in_stock_quantity | json }} && inventory > 0) {
+            const unit = inventory === 1 ? '{{ block.settings.unit_singular }}' : '{{ block.settings.unit_plural }}';
+            quantityText.textContent = `${inventory} ${unit} {{ block.settings.quantity_suffix }}`;
+            quantityText.style.display = 'block';
+          } else if (quantityText) {
+            quantityText.style.display = 'none';
+          }
+        }
+      }
+
+      fetchVariantData(variantId) {
+        fetch(`${window.location.pathname}?variant=${variantId}&section_id=${this.closest('.shopify-section').dataset.sectionId}`)
+          .then(response => response.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const scriptTag = doc.querySelector('script[type="application/json"]');
+            if (scriptTag) {
+              const productData = JSON.parse(scriptTag.textContent);
+              const variant = productData.variants.find(v => v.id == variantId);
+              if (variant) {
+                this.updateStockStatus({ variant });
+              }
+            }
+          })
+          .catch(error => console.error('Error fetching variant data:', error));
+      }
+    }
+
+    customElements.define('stock-indicator-{{ ai_gen_id }}', StockIndicator{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Stock indicator",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border",
+      "label": "Show border",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "header",
+      "content": "Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show icon",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Text weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "quantity_text_size",
+      "label": "Quantity text size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Stock thresholds"
+    },
+    {
+      "type": "range",
+      "id": "low_stock_threshold",
+      "label": "Low stock threshold",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "In stock"
+    },
+    {
+      "type": "text",
+      "id": "in_stock_text",
+      "label": "Text",
+      "default": "In stock"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_in_stock_quantity",
+      "label": "Show quantity",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "in_stock_bg_override",
+      "label": "Override background color",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "in_stock_bg_color",
+      "label": "Background color",
+      "default": "#e8f5e9"
+    },
+    {
+      "type": "color",
+      "id": "in_stock_text_color",
+      "label": "Text color",
+      "default": "#2e7d32"
+    },
+    {
+      "type": "color",
+      "id": "in_stock_icon_color",
+      "label": "Icon color",
+      "default": "#2e7d32"
+    },
+    {
+      "type": "header",
+      "content": "Low stock"
+    },
+    {
+      "type": "text",
+      "id": "low_stock_text",
+      "label": "Text",
+      "default": "Low stock"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_low_stock_quantity",
+      "label": "Show quantity",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "low_stock_bg_override",
+      "label": "Override background color",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "low_stock_bg_color",
+      "label": "Background color",
+      "default": "#fff3e0"
+    },
+    {
+      "type": "color",
+      "id": "low_stock_text_color",
+      "label": "Text color",
+      "default": "#e65100"
+    },
+    {
+      "type": "color",
+      "id": "low_stock_icon_color",
+      "label": "Icon color",
+      "default": "#e65100"
+    },
+    {
+      "type": "header",
+      "content": "Out of stock"
+    },
+    {
+      "type": "text",
+      "id": "out_of_stock_text",
+      "label": "Text",
+      "default": "Out of stock"
+    },
+    {
+      "type": "checkbox",
+      "id": "out_of_stock_bg_override",
+      "label": "Override background color",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "out_of_stock_bg_color",
+      "label": "Background color",
+      "default": "#ffebee"
+    },
+    {
+      "type": "color",
+      "id": "out_of_stock_text_color",
+      "label": "Text color",
+      "default": "#c62828"
+    },
+    {
+      "type": "color",
+      "id": "out_of_stock_icon_color",
+      "label": "Icon color",
+      "default": "#c62828"
+    },
+    {
+      "type": "header",
+      "content": "Quantity display"
+    },
+    {
+      "type": "text",
+      "id": "unit_singular",
+      "label": "Unit (singular)",
+      "default": "item"
+    },
+    {
+      "type": "text",
+      "id": "unit_plural",
+      "label": "Unit (plural)",
+      "default": "items"
+    },
+    {
+      "type": "text",
+      "id": "quantity_suffix",
+      "label": "Suffix text",
+      "default": "available"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Stock indicator"
+    }
+  ]
+}
+{% endschema %}
