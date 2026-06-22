@@ -1,37 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap');
-
 /* ============================================
    SALTBRED DESIGN TOKENS
+   Overrides theme CSS variables at root level
    ============================================ */
 :root {
+  /* Brand colors */
   --sb-navy: #0d1f2d;
-  --sb-navy-mid: #1a2a3a;
-  --sb-navy-light: #2a4a5a;
   --sb-gold: #c8a96e;
-  --sb-gold-light: #d4b97e;
   --sb-cream: #f7f5f0;
-  --sb-white: #ffffff;
   --sb-black: #111111;
-  --sb-gray: #888888;
-  --sb-gray-light: #e5e5e5;
-  --sb-font-heading: 'Bebas Neue', sans-serif;
-  --sb-font-body: 'Inter', sans-serif;
-}
 
-/* ============================================
-   GLOBAL RESETS & BASE
-   ============================================ */
-body {
-  font-family: var(--sb-font-body) !important;
-  background: var(--sb-white);
-  color: var(--sb-black);
+  /* Override theme font families with Bebas Neue + Inter */
+  --font-heading--family: 'Bebas Neue', sans-serif;
+  --font-heading--style: normal;
+  --font-heading--weight: 400;
+
+  --font-subheading--family: 'Bebas Neue', sans-serif;
+  --font-subheading--style: normal;
+  --font-subheading--weight: 400;
+
+  --font-accent--family: 'Inter', sans-serif;
+  --font-accent--style: normal;
+  --font-accent--weight: 400;
+
+  --font-body--family: 'Inter', sans-serif;
+  --font-body--style: normal;
+  --font-body--weight: 400;
+
+  /* Override heading font presets */
+  --font-h1--family: 'Bebas Neue', sans-serif;
+  --font-h2--family: 'Bebas Neue', sans-serif;
+  --font-h3--family: 'Bebas Neue', sans-serif;
+  --font-h4--family: 'Bebas Neue', sans-serif;
+  --font-h5--family: 'Bebas Neue', sans-serif;
+  --font-h6--family: 'Bebas Neue', sans-serif;
+  --font-paragraph--family: 'Inter', sans-serif;
+
+  /* Button fonts */
+  --button-font-family-primary: 'Inter', sans-serif;
+  --button-font-family-secondary: 'Inter', sans-serif;
 }
 
 /* ============================================
    SHIPPING PROGRESS BAR
    ============================================ */
 .sb-shipping-bar {
-  background: var(--sb-black);
+  background: var(--sb-black, #111);
   padding: 8px 20px;
   position: relative;
   z-index: 200;
@@ -46,7 +59,7 @@ body {
 }
 
 .sb-shipping-bar__text {
-  font-family: var(--sb-font-body);
+  font-family: 'Inter', sans-serif;
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -55,7 +68,7 @@ body {
 }
 
 .sb-shipping-bar__text .sb-amount {
-  color: var(--sb-gold);
+  color: #c8a96e;
   font-weight: 500;
 }
 
@@ -71,316 +84,88 @@ body {
 
 .sb-shipping-bar__fill {
   height: 100%;
-  background: var(--sb-gold);
+  background: #c8a96e;
   border-radius: 2px;
   transition: width 0.5s ease;
   width: 0%;
 }
 
 /* ============================================
-   ANNOUNCEMENT BAR OVERRIDE
+   HEADINGS - Force Bebas Neue
    ============================================ */
-.header-announcements {
-  background: var(--sb-navy) !important;
-  color: rgba(255,255,255,0.85) !important;
-  font-family: var(--sb-font-body) !important;
-  font-size: 11px !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase !important;
-}
-
-/* ============================================
-   HEADER OVERRIDES
-   ============================================ */
-.header,
-.header__row {
-  background-color: var(--sb-white) !important;
-  border-bottom: 1px solid var(--sb-gray-light) !important;
-}
-
-.header-logo__image,
-.header-logo {
-  font-family: var(--sb-font-heading) !important;
-}
-
-.menu-list__link,
-.header-actions__action {
-  font-family: var(--sb-font-body) !important;
-  font-size: 11px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.1em !important;
-  text-transform: uppercase !important;
-  color: var(--sb-black) !important;
-}
-
-/* ============================================
-   HEADINGS - BEBAS NEUE EVERYWHERE
-   ============================================ */
-h1, h2, h3, h4,
-.section-title,
-.product-title,
-.card__heading,
-.featured-product__title {
-  font-family: var(--sb-font-heading) !important;
-  letter-spacing: 0.02em !important;
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Bebas Neue', sans-serif !important;
   line-height: 1 !important;
+  letter-spacing: 0.02em;
 }
 
 /* ============================================
-   MARQUEE / TICKER BAR
+   MARQUEE BAR - Gold background
    ============================================ */
-.marquee {
-  background: var(--sb-gold) !important;
+.marquee,
+.marquee__track {
+  background-color: #c8a96e !important;
 }
 
+.marquee__item,
 .marquee__text,
-.marquee__item {
-  font-family: var(--sb-font-heading) !important;
-  font-size: 15px !important;
+.marquee *:not(button) {
+  color: #fff !important;
+  font-family: 'Bebas Neue', sans-serif !important;
   letter-spacing: 0.15em !important;
-  color: var(--sb-white) !important;
-  text-transform: uppercase !important;
-}
-
-/* ============================================
-   HERO SECTION
-   ============================================ */
-.hero {
-  position: relative;
-}
-
-.hero__content-wrapper {
-  background: transparent !important;
-}
-
-.hero__title {
-  font-family: var(--sb-font-heading) !important;
-  font-size: clamp(60px, 10vw, 120px) !important;
-  line-height: 0.95 !important;
-  letter-spacing: 0.02em !important;
-  color: var(--sb-white) !important;
-}
-
-.hero__subtitle,
-.hero__description {
-  font-family: var(--sb-font-body) !important;
-  font-weight: 300 !important;
-  font-size: 14px !important;
-  line-height: 1.7 !important;
-  color: rgba(255,255,255,0.75) !important;
 }
 
 /* ============================================
    BUTTONS
    ============================================ */
-.button--primary,
-.button[type="submit"],
-.shopify-payment-button__button {
-  background: var(--sb-black) !important;
-  color: var(--sb-white) !important;
-  border: none !important;
-  font-family: var(--sb-font-body) !important;
+.button,
+button.button {
+  border-radius: 0 !important;
+  font-family: 'Inter', sans-serif !important;
   font-size: 11px !important;
   font-weight: 500 !important;
   letter-spacing: 0.15em !important;
   text-transform: uppercase !important;
-  border-radius: 0 !important;
-  padding: 14px 32px !important;
-  transition: background 0.2s ease !important;
-}
-
-.button--primary:hover {
-  background: var(--sb-navy) !important;
-}
-
-.button--secondary,
-.button--outline {
-  background: transparent !important;
-  color: var(--sb-black) !important;
-  border: 1px solid var(--sb-black) !important;
-  font-family: var(--sb-font-body) !important;
-  font-size: 11px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.15em !important;
-  text-transform: uppercase !important;
-  border-radius: 0 !important;
 }
 
 /* ============================================
    PRODUCT CARDS
    ============================================ */
-.card {
-  border: none !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-}
-
-.card__heading a,
-.card__heading {
-  font-family: var(--sb-font-heading) !important;
-  font-size: 22px !important;
-  line-height: 1.1 !important;
-  color: var(--sb-black) !important;
-  letter-spacing: 0.02em !important;
-}
-
-.price__regular,
-.price__sale,
-.price {
-  font-family: var(--sb-font-body) !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  color: var(--sb-black) !important;
-}
-
-.badge {
-  border-radius: 0 !important;
-  font-family: var(--sb-font-body) !important;
-  font-size: 9px !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase !important;
-  background: var(--sb-black) !important;
-  color: var(--sb-white) !important;
+.card__heading,
+.card__heading a {
+  font-family: 'Bebas Neue', sans-serif !important;
 }
 
 /* ============================================
-   COLLECTION CARDS
+   FOOTER - Dark background
    ============================================ */
-.collection-card__title,
-.collection-links__title {
-  font-family: var(--sb-font-heading) !important;
-  font-size: 28px !important;
-  letter-spacing: 0.02em !important;
+.footer,
+footer {
+  background-color: #111 !important;
+}
+
+.footer *,
+footer * {
+  color: rgba(255,255,255,0.65);
+}
+
+.footer a:hover,
+footer a:hover {
+  color: #fff;
 }
 
 /* ============================================
-   PRODUCT PAGE
+   ANNOUNCEMENT BAR
    ============================================ */
-.product-title {
-  font-family: var(--sb-font-heading) !important;
-  font-size: clamp(36px, 5vw, 56px) !important;
-  line-height: 1 !important;
-  color: var(--sb-black) !important;
-}
-
-.product-form__submit {
-  background: var(--sb-black) !important;
-  color: var(--sb-white) !important;
-  font-family: var(--sb-font-heading) !important;
-  font-size: 22px !important;
-  letter-spacing: 0.1em !important;
-  border-radius: 0 !important;
-  height: 52px !important;
-  width: 100% !important;
-}
-
-.variant-picker__option-label {
-  font-family: var(--sb-font-body) !important;
-  font-size: 10px !important;
-  letter-spacing: 0.18em !important;
-  text-transform: uppercase !important;
-  color: var(--sb-gray) !important;
-}
-
-.variant-picker__option-values .swatch__button,
-.variant-picker__option-values button {
-  border-radius: 0 !important;
-  border: 1px solid var(--sb-gray-light) !important;
-  font-family: var(--sb-font-body) !important;
-  font-size: 12px !important;
-  font-weight: 500 !important;
-}
-
-.variant-picker__option-values .swatch__button[aria-checked="true"],
-.variant-picker__option-values button[aria-checked="true"] {
-  border-color: var(--sb-black) !important;
-  background: var(--sb-black) !important;
-  color: var(--sb-white) !important;
+.announcement-bar,
+.header-announcements {
+  background: #0d1f2d !important;
 }
 
 /* ============================================
-   FOOTER OVERRIDES
-   ============================================ */
-.footer {
-  background: var(--sb-black) !important;
-  color: rgba(255,255,255,0.65) !important;
-}
-
-.footer__heading,
-.footer-block__heading {
-  font-family: var(--sb-font-heading) !important;
-  font-size: 13px !important;
-  letter-spacing: 0.2em !important;
-  text-transform: uppercase !important;
-  color: rgba(255,255,255,0.4) !important;
-}
-
-.footer__list a,
-.footer-block__list a {
-  font-size: 13px !important;
-  color: rgba(255,255,255,0.65) !important;
-  text-decoration: none !important;
-  font-family: var(--sb-font-body) !important;
-}
-
-.footer__list a:hover,
-.footer-block__list a:hover {
-  color: var(--sb-white) !important;
-}
-
-.footer__copyright,
-.footer__copyright-content {
-  font-size: 11px !important;
-  color: rgba(255,255,255,0.3) !important;
-  font-family: var(--sb-font-body) !important;
-}
-
-/* ============================================
-   SECTION TITLES (GLOBAL)
-   ============================================ */
-.section-title,
-[class*="__title"]:not(.menu-list__link) {
-  font-family: var(--sb-font-heading) !important;
-}
-
-.section-subtitle,
-.section-label {
-  font-family: var(--sb-font-body) !important;
-  font-size: 11px !important;
-  letter-spacing: 0.2em !important;
-  text-transform: uppercase !important;
-  color: var(--sb-gray) !important;
-}
-
-/* ============================================
-   MEDIA WITH CONTENT (FEATURE SECTION)
-   ============================================ */
-.media-with-content__content {
-  background: var(--sb-cream) !important;
-}
-
-/* ============================================
-   CART DRAWER
-   ============================================ */
-.cart-drawer__heading,
-.cart__title {
-  font-family: var(--sb-font-heading) !important;
-  font-size: 28px !important;
-  letter-spacing: 0.05em !important;
-}
-
-/* ============================================
-   MOBILE RESPONSIVE
+   MOBILE
    ============================================ */
 @media screen and (max-width: 749px) {
-  .hero__title {
-    font-size: clamp(48px, 14vw, 80px) !important;
-  }
-
-  .product-title {
-    font-size: 36px !important;
-  }
-
   .sb-shipping-bar__track {
     max-width: 100%;
   }
