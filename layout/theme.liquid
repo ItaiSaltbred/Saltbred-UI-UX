@@ -24,15 +24,18 @@
       >
     {%- endif -%}
 
-    {% comment %} This a way to wait for main content to load when navigating to a new page so that the view transitions can work consistently {% endcomment %}
-   
-
     {%- render 'meta-tags' -%}
     {%- render 'stylesheets' -%}
     {%- render 'fonts' -%}
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
+
+    <!-- SaltBred Custom Theme -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    {{ 'saltbred-theme.css' | asset_url | stylesheet_tag }}
 
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
@@ -43,18 +46,16 @@
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
+
+    <!-- SaltBred Shipping Progress Bar -->
+    {%- render 'sb-shipping-bar' -%}
+
     <div id="header-group">
       {% sections 'header-group' %}
     </div>
 
     <script>
-      // Inline header height calculation to prevent layout shift
-      // Note: Updates in calculateHeaderGroupHeight() and updateTransparentHeaderOffset()utilities.js should be kept in sync with this function
       (function setHeaderHeighCustomProperties() {
-        /*
-         * Header calculation functions for maintaining CSS variables
-         * Mimic calculateHeaderGroupHeight() in utilities.js
-         */
         const header = document.querySelector('header-component');
         const headerGroup = document.querySelector('#header-group');
         const hasHeaderSection = headerGroup?.querySelector('.header-section');
@@ -62,8 +63,6 @@
         if (!header || !headerGroup) return;
 
         const headerHeight = header.offsetHeight;
-
-        // Calculate the total height of the header group
         let headerGroupHeight = 0;
         const children = headerGroup.children;
         for (let i = 0; i < children.length; i++) {
@@ -72,19 +71,12 @@
           headerGroupHeight += element.offsetHeight;
         }
 
-        // Check for transparent header special case
         if (header.hasAttribute('transparent') && header.parentElement?.nextElementSibling) {
           headerGroupHeight += headerHeight;
         }
 
-        // Set CSS variables
         document.body.style.setProperty('--header-height', `${headerHeight}px`);
         document.body.style.setProperty('--header-group-height', `${headerGroupHeight}px`);
-
-        /**
-         * Updates CSS custom properties for transparent header offset calculation
-         * Mimic updateTransparentHeaderOffset() in utilities.js
-         */
 
         if (!hasHeaderSection || !header?.hasAttribute('transparent')) {
           document.body.style.setProperty('--transparent-header-offset-boolean', '0');
@@ -92,7 +84,6 @@
         }
 
         const hasImmediateSection = hasHeaderSection.nextElementSibling?.classList.contains('shopify-section');
-
         const shouldApplyOffset = !hasImmediateSection ? '1' : '0';
         document.body.style.setProperty('--transparent-header-offset-boolean', shouldApplyOffset);
       })();
@@ -116,5 +107,40 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
+
+    <!-- SaltBred Shipping Bar Script -->
+    <script>
+      (function() {
+        var FREE_SHIP_THRESHOLD = 7500;
+
+        function updateShippingBar() {
+          fetch('/cart.js')
+            .then(function(r) { return r.json(); })
+            .then(function(cart) {
+              var total = cart.total_price;
+              var remaining = Math.max(0, FREE_SHIP_THRESHOLD - total);
+              var pct = Math.min(100, Math.round((total / FREE_SHIP_THRESHOLD) * 100));
+
+              var fill = document.getElementById('sb-ship-fill');
+              var msg = document.getElementById('sb-ship-msg');
+
+              if (!fill || !msg) return;
+
+              fill.style.width = pct + '%';
+
+              if (total >= FREE_SHIP_THRESHOLD) {
+                msg.innerHTML = '🎉 You\'ve unlocked free shipping!';
+              } else {
+                var dollars = (remaining / 100).toFixed(2).replace(/\.00$/, '');
+                msg.innerHTML = 'Add <strong class="sb-amount">$' + dollars + '</strong> more for free shipping';
+              }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', updateShippingBar);
+        document.addEventListener('cart:updated', updateShippingBar);
+        document.addEventListener('cart:change', updateShippingBar);
+      })();
+    </script>
   </body>
 </html>
