@@ -1,0 +1,315 @@
+{%- liquid
+  assign c1 = collections[section.settings.collection_1]
+  assign c2 = collections[section.settings.collection_2]
+  assign c3 = collections[section.settings.collection_3]
+  assign c4 = collections[section.settings.collection_4]
+  assign c5 = collections[section.settings.collection_5]
+  assign c6 = collections[section.settings.collection_6]
+-%}
+
+<div class="sb-colls" id="sbs-{{ section.id }}">
+  <div class="sb-colls__header">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="sb-colls__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    <div class="sb-colls__header-row">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="sb-colls__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      <a href="/collections" class="sb-colls__view-all">View All <span>→</span></a>
+    </div>
+  </div>
+
+  <!-- Mosaic row -->
+  <div class="sb-colls__mosaic">
+    {%- if c1 != blank -%}
+      {%- liquid
+        if c1.featured_image != blank
+          assign img1 = c1.featured_image
+        elsif c1.products.first.featured_image != blank
+          assign img1 = c1.products.first.featured_image
+        endif
+      -%}
+      <a href="{{ c1.url }}" class="sb-colls__card sb-colls__card--featured">
+        {%- if img1 != blank -%}
+          <img src="{{ img1 | image_url: width: 1200 }}" alt="{{ c1.title | escape }}" loading="lazy" class="sb-colls__img">
+        {%- else -%}
+          <div class="sb-colls__img-placeholder"></div>
+        {%- endif -%}
+        <div class="sb-colls__overlay"></div>
+        <div class="sb-colls__info">
+          <h3 class="sb-colls__title">{{ c1.title }}</h3>
+          <span class="sb-colls__count">{{ c1.products_count }} styles</span>
+        </div>
+      </a>
+    {%- endif -%}
+
+    <div class="sb-colls__stack">
+      {%- if c2 != blank -%}
+        {%- liquid
+          if c2.featured_image != blank
+            assign img2 = c2.featured_image
+          elsif c2.products.first.featured_image != blank
+            assign img2 = c2.products.first.featured_image
+          endif
+        -%}
+        <a href="{{ c2.url }}" class="sb-colls__card">
+          {%- if img2 != blank -%}
+            <img src="{{ img2 | image_url: width: 700 }}" alt="{{ c2.title | escape }}" loading="lazy" class="sb-colls__img">
+          {%- else -%}
+            <div class="sb-colls__img-placeholder"></div>
+          {%- endif -%}
+          <div class="sb-colls__overlay"></div>
+          <div class="sb-colls__info">
+            <h3 class="sb-colls__title">{{ c2.title }}</h3>
+            <span class="sb-colls__count">{{ c2.products_count }} styles</span>
+          </div>
+        </a>
+      {%- endif -%}
+      {%- if c3 != blank -%}
+        {%- liquid
+          if c3.featured_image != blank
+            assign img3 = c3.featured_image
+          elsif c3.products.first.featured_image != blank
+            assign img3 = c3.products.first.featured_image
+          endif
+        -%}
+        <a href="{{ c3.url }}" class="sb-colls__card">
+          {%- if img3 != blank -%}
+            <img src="{{ img3 | image_url: width: 700 }}" alt="{{ c3.title | escape }}" loading="lazy" class="sb-colls__img">
+          {%- else -%}
+            <div class="sb-colls__img-placeholder"></div>
+          {%- endif -%}
+          <div class="sb-colls__overlay"></div>
+          <div class="sb-colls__info">
+            <h3 class="sb-colls__title">{{ c3.title }}</h3>
+            <span class="sb-colls__count">{{ c3.products_count }} styles</span>
+          </div>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <!-- Bottom row -->
+  <div class="sb-colls__row">
+    {%- for coll_handle in section.settings.collection_4_handles -%}{% endfor -%}
+    {%- assign bottom_colls = c4, c5, c6 -%}
+    {%- if c4 != blank -%}
+      {%- liquid
+        if c4.featured_image != blank
+          assign img4 = c4.featured_image
+        elsif c4.products.first.featured_image != blank
+          assign img4 = c4.products.first.featured_image
+        endif
+      -%}
+      <a href="{{ c4.url }}" class="sb-colls__card sb-colls__card--sm">
+        {%- if img4 != blank -%}
+          <img src="{{ img4 | image_url: width: 700 }}" alt="{{ c4.title | escape }}" loading="lazy" class="sb-colls__img">
+        {%- else -%}
+          <div class="sb-colls__img-placeholder"></div>
+        {%- endif -%}
+        <div class="sb-colls__overlay"></div>
+        <div class="sb-colls__info">
+          <h3 class="sb-colls__title">{{ c4.title }}</h3>
+          <span class="sb-colls__count">{{ c4.products_count }} styles</span>
+        </div>
+      </a>
+    {%- endif -%}
+    {%- if c5 != blank -%}
+      {%- liquid
+        if c5.featured_image != blank
+          assign img5 = c5.featured_image
+        elsif c5.products.first.featured_image != blank
+          assign img5 = c5.products.first.featured_image
+        endif
+      -%}
+      <a href="{{ c5.url }}" class="sb-colls__card sb-colls__card--sm">
+        {%- if img5 != blank -%}
+          <img src="{{ img5 | image_url: width: 700 }}" alt="{{ c5.title | escape }}" loading="lazy" class="sb-colls__img">
+        {%- else -%}
+          <div class="sb-colls__img-placeholder"></div>
+        {%- endif -%}
+        <div class="sb-colls__overlay"></div>
+        <div class="sb-colls__info">
+          <h3 class="sb-colls__title">{{ c5.title }}</h3>
+          <span class="sb-colls__count">{{ c5.products_count }} styles</span>
+        </div>
+      </a>
+    {%- endif -%}
+    {%- if c6 != blank -%}
+      {%- liquid
+        if c6.featured_image != blank
+          assign img6 = c6.featured_image
+        elsif c6.products.first.featured_image != blank
+          assign img6 = c6.products.first.featured_image
+        endif
+      -%}
+      <a href="{{ c6.url }}" class="sb-colls__card sb-colls__card--sm">
+        {%- if img6 != blank -%}
+          <img src="{{ img6 | image_url: width: 700 }}" alt="{{ c6.title | escape }}" loading="lazy" class="sb-colls__img">
+        {%- else -%}
+          <div class="sb-colls__img-placeholder"></div>
+        {%- endif -%}
+        <div class="sb-colls__overlay"></div>
+        <div class="sb-colls__info">
+          <h3 class="sb-colls__title">{{ c6.title }}</h3>
+          <span class="sb-colls__count">{{ c6.products_count }} styles</span>
+        </div>
+      </a>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  #sbs-{{ section.id }} {
+    background: #f7f5f0;
+    padding: 72px 32px 80px;
+  }
+  #sbs-{{ section.id }} .sb-colls__header {
+    max-width: 1280px; margin: 0 auto 32px;
+  }
+  #sbs-{{ section.id }} .sb-colls__eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: #c8a96e; margin-bottom: 8px;
+  }
+  #sbs-{{ section.id }} .sb-colls__header-row {
+    display: flex; align-items: flex-end;
+    justify-content: space-between;
+  }
+  #sbs-{{ section.id }} .sb-colls__heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 6vw, 76px);
+    line-height: 0.9; color: #111;
+    letter-spacing: 0.02em;
+  }
+  #sbs-{{ section.id }} .sb-colls__view-all {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: #111; text-decoration: none;
+    padding-bottom: 8px;
+    transition: color 0.2s;
+  }
+  #sbs-{{ section.id }} .sb-colls__view-all:hover { color: #c8a96e; }
+
+  /* Mosaic */
+  #sbs-{{ section.id }} .sb-colls__mosaic {
+    max-width: 1280px; margin: 0 auto 8px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 8px;
+    height: 560px;
+  }
+  #sbs-{{ section.id }} .sb-colls__stack {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* Bottom row */
+  #sbs-{{ section.id }} .sb-colls__row {
+    max-width: 1280px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  /* Cards */
+  #sbs-{{ section.id }} .sb-colls__card {
+    position: relative; display: block;
+    overflow: hidden; text-decoration: none;
+    background: #1a2a38;
+  }
+  #sbs-{{ section.id }} .sb-colls__card--featured { }
+  #sbs-{{ section.id }} .sb-colls__card--sm { height: 280px; }
+  #sbs-{{ section.id }} .sb-colls__img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    display: block;
+    transition: transform 0.65s ease;
+  }
+  #sbs-{{ section.id }} .sb-colls__img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #0d1f2d 0%, #1a3a52 100%);
+  }
+  #sbs-{{ section.id }} .sb-colls__card:hover .sb-colls__img {
+    transform: scale(1.07);
+  }
+  #sbs-{{ section.id }} .sb-colls__overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+    transition: opacity 0.3s;
+  }
+  #sbs-{{ section.id }} .sb-colls__card:hover .sb-colls__overlay {
+    opacity: 0.9;
+  }
+  #sbs-{{ section.id }} .sb-colls__info {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 24px 22px;
+  }
+  #sbs-{{ section.id }} .sb-colls__title {
+    font-family: 'Bebas Neue', sans-serif;
+    color: #fff; line-height: 1;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+    transition: color 0.2s;
+  }
+  #sbs-{{ section.id }} .sb-colls__card--featured .sb-colls__title { font-size: 38px; }
+  #sbs-{{ section.id }} .sb-colls__card:not(.sb-colls__card--featured) .sb-colls__title { font-size: 26px; }
+  #sbs-{{ section.id }} .sb-colls__card--sm .sb-colls__title { font-size: 24px; }
+  #sbs-{{ section.id }} .sb-colls__card:hover .sb-colls__title { color: #c8a96e; }
+  #sbs-{{ section.id }} .sb-colls__count {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; color: rgba(255,255,255,0.65);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  @media (max-width: 900px) {
+    #sbs-{{ section.id }} .sb-colls__mosaic {
+      grid-template-columns: 1fr 1fr;
+      height: 420px;
+    }
+    #sbs-{{ section.id }} .sb-colls__row {
+      grid-template-columns: 1fr 1fr;
+    }
+    #sbs-{{ section.id }} .sb-colls__card--sm { height: 220px; }
+  }
+  @media (max-width: 749px) {
+    #sbs-{{ section.id }} { padding: 48px 16px 56px; }
+    #sbs-{{ section.id }} .sb-colls__mosaic {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    #sbs-{{ section.id }} .sb-colls__card--featured { height: 320px; }
+    #sbs-{{ section.id }} .sb-colls__stack {
+      grid-template-rows: none;
+      grid-template-columns: 1fr 1fr;
+    }
+    #sbs-{{ section.id }} .sb-colls__stack .sb-colls__card { height: 200px; }
+    #sbs-{{ section.id }} .sb-colls__row { grid-template-columns: 1fr 1fr; }
+    #sbs-{{ section.id }} .sb-colls__card--sm { height: 180px; }
+    #sbs-{{ section.id }} .sb-colls__header-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    #sbs-{{ section.id }} .sb-colls__view-all { padding-bottom: 0; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "SB — Collection Grid",
+  "tag": "div",
+  "class": "sb-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Browse" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "SHOP BY COLLECTION" },
+    { "type": "collection", "id": "collection_1", "label": "Featured collection (large)" },
+    { "type": "collection", "id": "collection_2", "label": "Collection 2 (top-right)" },
+    { "type": "collection", "id": "collection_3", "label": "Collection 3 (bottom-right)" },
+    { "type": "collection", "id": "collection_4", "label": "Collection 4" },
+    { "type": "collection", "id": "collection_5", "label": "Collection 5" },
+    { "type": "collection", "id": "collection_6", "label": "Collection 6" }
+  ],
+  "presets": [{ "name": "SB — Collection Grid" }]
+}
+{% endschema %}
