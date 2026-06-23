@@ -26,12 +26,15 @@
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
 
-    <!-- SaltBred: Bebas Neue Font -->
+    <!-- SaltBred: Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- SaltBred Custom Styles -->
+    <!-- SaltBred Design System CSS -->
+    {{ 'saltbred-theme.css' | asset_url | stylesheet_tag }}
+
+    <!-- SaltBred Critical Overrides -->
     <style>
       :root {
         --font-heading--family: 'Bebas Neue', sans-serif !important;
@@ -46,71 +49,24 @@
         --font-body--family: 'Inter', sans-serif !important;
         --button-font-family-primary: 'Inter', sans-serif !important;
       }
-
       h1, h2, h3, h4, h5, h6,
       .card__heading, .card__heading a,
       .product-title, .collection-title {
         font-family: 'Bebas Neue', sans-serif !important;
         line-height: 1 !important;
       }
-
       body, p, a, li, span, div {
         font-family: 'Inter', sans-serif;
       }
-
       /* Shipping bar */
-      .sb-shipping-bar {
-        background: #111111;
-        padding: 8px 20px;
-        z-index: 200;
-        position: relative;
-      }
-      .sb-shipping-bar__inner {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-      .sb-shipping-bar__text {
-        font-family: 'Inter', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.85);
-        text-align: center;
-      }
-      .sb-shipping-bar__text strong { color: #c8a96e; }
-      .sb-shipping-bar__track {
-        height: 3px;
-        background: rgba(255,255,255,0.12);
-        border-radius: 2px;
-        overflow: hidden;
-        max-width: 400px;
-        margin: 0 auto;
-        width: 100%;
-      }
-      .sb-shipping-bar__fill {
-        height: 100%;
-        background: #c8a96e;
-        border-radius: 2px;
-        transition: width 0.5s ease;
-        width: 0%;
-      }
-
-      /* Marquee gold */
-      .marquee { background-color: #c8a96e !important; }
-      .marquee__item, .marquee__text { color: #fff !important; font-family: 'Bebas Neue', sans-serif !important; }
-
-      /* Dark footer */
-      footer, .footer { background-color: #111 !important; }
-      footer *, .footer * { color: rgba(255,255,255,0.65); }
-
-      /* Buttons */
-      .button { border-radius: 0 !important; font-family: 'Inter', sans-serif !important; letter-spacing: 0.12em !important; text-transform: uppercase !important; }
-
+      .sb-shipping-bar { background:#111; padding:8px 20px; z-index:200; position:relative; }
+      .sb-shipping-bar__inner { max-width:1200px; margin:0 auto; display:flex; flex-direction:column; gap:5px; }
+      .sb-shipping-bar__text { font-family:'Inter',sans-serif; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.85); text-align:center; }
+      .sb-shipping-bar__text strong { color:#c8a96e; }
+      .sb-shipping-bar__track { height:3px; background:rgba(255,255,255,0.12); border-radius:2px; overflow:hidden; max-width:400px; margin:0 auto; width:100%; }
+      .sb-shipping-bar__fill { height:100%; background:#c8a96e; border-radius:2px; transition:width 0.5s ease; width:0%; }
       /* Announcement bar */
-      .announcement-bar, .header-announcements { background: #0d1f2d !important; }
+      .announcement-bar, .header-announcements { background:#0d1f2d !important; }
     </style>
 
     {% if request.design_mode %}
@@ -190,7 +146,7 @@
             if (!fill || !msg) return;
             fill.style.width = pct + '%';
             msg.innerHTML = total >= THRESHOLD
-              ? '🎉 You\'ve unlocked free shipping!'
+              ? 'You\'ve unlocked free shipping!'
               : 'Add <strong style="color:#c8a96e">$' + (rem/100).toFixed(0) + '</strong> more for free shipping';
           });
         }
