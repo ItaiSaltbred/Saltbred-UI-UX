@@ -1,0 +1,271 @@
+{%- assign featured = collections[section.settings.collection] -%}
+
+<div class="sb-prods" id="sbs-{{ section.id }}">
+  <div class="sb-prods__header">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="sb-prods__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    <div class="sb-prods__header-row">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="sb-prods__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if featured != blank -%}
+        <a href="{{ featured.url }}" class="sb-prods__view-all">View All <span>→</span></a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="sb-prods__grid">
+    {%- if featured != blank -%}
+      {%- for product in featured.products limit: section.settings.product_count -%}
+        {%- liquid
+          assign inv = product.variants | map: 'inventory_quantity' | sum
+          if product.available == false
+            assign stock_class = 'out'
+            assign stock_label = 'Out of Stock'
+          elsif inv <= 15
+            assign stock_class = 'low'
+            assign stock_label = 'Low Stock'
+          else
+            assign stock_class = 'in'
+            assign stock_label = 'In Stock'
+          endif
+          assign img = product.featured_image
+        -%}
+        <a href="{{ product.url }}" class="sb-pcard" aria-label="{{ product.title | escape }}">
+          <div class="sb-pcard__media">
+            {%- if img != blank -%}
+              <img
+                src="{{ img | image_url: width: 600 }}"
+                srcset="{{ img | image_url: width: 400 }} 400w, {{ img | image_url: width: 700 }} 700w"
+                sizes="(max-width: 749px) 50vw, 25vw"
+                alt="{{ img.alt | default: product.title | escape }}"
+                loading="lazy"
+                class="sb-pcard__img"
+                width="{{ img.width }}"
+                height="{{ img.height }}"
+              >
+              {%- if product.images[1] != blank -%}
+                <img
+                  src="{{ product.images[1] | image_url: width: 600 }}"
+                  alt="{{ product.title | escape }}"
+                  loading="lazy"
+                  class="sb-pcard__img sb-pcard__img--hover"
+                  width="{{ product.images[1].width }}"
+                  height="{{ product.images[1].height }}"
+                >
+              {%- endif -%}
+            {%- else -%}
+              <div class="sb-pcard__placeholder"></div>
+            {%- endif -%}
+
+            <!-- Stock badge -->
+            <div class="sb-pcard__stock sb-pcard__stock--{{ stock_class }}">
+              <span class="sb-pcard__stock-dot"></span>
+              <span>{{ stock_label }}</span>
+            </div>
+
+            <!-- Quick shop overlay -->
+            <div class="sb-pcard__quick">
+              <span>Quick Shop</span>
+            </div>
+          </div>
+
+          <div class="sb-pcard__body">
+            <h3 class="sb-pcard__title">{{ product.title }}</h3>
+            <div class="sb-pcard__meta">
+              <span class="sb-pcard__price">
+                {%- if product.compare_at_price > product.price -%}
+                  <s class="sb-pcard__price--was">{{ product.compare_at_price | money }}</s>
+                {%- endif -%}
+                {{ product.price | money }}
+              </span>
+              {%- unless product.has_only_default_variant -%}
+                <span class="sb-pcard__variants">{{ product.variants.size }} options</span>
+              {%- endunless -%}
+            </div>
+          </div>
+        </a>
+      {%- else -%}
+        <p class="sb-prods__empty">No products found.</p>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  #sbs-{{ section.id }} {
+    background: #fff;
+    padding: 72px 32px 88px;
+  }
+  #sbs-{{ section.id }} .sb-prods__header {
+    max-width: 1280px; margin: 0 auto 36px;
+  }
+  #sbs-{{ section.id }} .sb-prods__eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: #c8a96e; margin-bottom: 8px;
+  }
+  #sbs-{{ section.id }} .sb-prods__header-row {
+    display: flex; align-items: flex-end;
+    justify-content: space-between;
+  }
+  #sbs-{{ section.id }} .sb-prods__heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 6vw, 76px);
+    line-height: 0.9; color: #111;
+    letter-spacing: 0.02em;
+  }
+  #sbs-{{ section.id }} .sb-prods__view-all {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: #111; text-decoration: none;
+    padding-bottom: 8px;
+    transition: color 0.2s;
+  }
+  #sbs-{{ section.id }} .sb-prods__view-all:hover { color: #c8a96e; }
+  #sbs-{{ section.id }} .sb-prods__grid {
+    max-width: 1280px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px 20px;
+  }
+
+  /* Product card */
+  .sb-pcard {
+    display: block; text-decoration: none; color: #111;
+  }
+  .sb-pcard__media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: #f0eee9;
+    margin-bottom: 14px;
+  }
+  .sb-pcard__img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease, opacity 0.4s ease;
+    display: block;
+  }
+  .sb-pcard__img--hover {
+    opacity: 0;
+    transition: transform 0.6s ease, opacity 0.4s ease;
+  }
+  .sb-pcard:hover .sb-pcard__img:not(.sb-pcard__img--hover) {
+    transform: scale(1.06);
+    opacity: 0;
+  }
+  .sb-pcard:hover .sb-pcard__img--hover {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  .sb-pcard__placeholder {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #e8e4dc 0%, #d0ccc4 100%);
+  }
+
+  /* Stock badge */
+  .sb-pcard__stock {
+    position: absolute; top: 11px; left: 11px;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 20px; padding: 4px 9px 4px 7px;
+    color: #111; pointer-events: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  .sb-pcard__stock-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%; flex-shrink: 0;
+    display: block;
+  }
+  .sb-pcard__stock--in .sb-pcard__stock-dot  { background: #38a169; }
+  .sb-pcard__stock--low .sb-pcard__stock-dot { background: #d69e2e; }
+  .sb-pcard__stock--out .sb-pcard__stock-dot { background: #e53e3e; }
+
+  /* Quick shop */
+  .sb-pcard__quick {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 14px;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    transform: translateY(100%);
+    transition: transform 0.28s ease;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: #111;
+  }
+  .sb-pcard:hover .sb-pcard__quick { transform: translateY(0); }
+
+  /* Card body */
+  .sb-pcard__title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 0.02em;
+    color: #111; line-height: 1.05;
+    margin-bottom: 6px;
+    transition: color 0.2s;
+  }
+  .sb-pcard:hover .sb-pcard__title { color: #c8a96e; }
+  .sb-pcard__meta {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sb-pcard__price {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 500; color: #333;
+  }
+  .sb-pcard__price--was {
+    font-size: 12px; color: #aaa;
+    text-decoration: line-through;
+    margin-right: 4px;
+  }
+  .sb-pcard__variants {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; color: #999;
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 1024px) {
+    #sbs-{{ section.id }} .sb-prods__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 749px) {
+    #sbs-{{ section.id }} { padding: 48px 16px 56px; }
+    #sbs-{{ section.id }} .sb-prods__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 12px;
+    }
+    #sbs-{{ section.id }} .sb-prods__header-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    #sbs-{{ section.id }} .sb-prods__view-all { padding-bottom: 0; }
+    .sb-pcard__quick { display: none; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "SB — Featured Products",
+  "tag": "div",
+  "class": "sb-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Our Best Sellers" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "SHOP NAKEDSKIN" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    {
+      "type": "range",
+      "id": "product_count",
+      "label": "Number of products",
+      "min": 4, "max": 12, "step": 4, "default": 8
+    }
+  ],
+  "presets": [{ "name": "SB — Featured Products" }]
+}
+{% endschema %}
