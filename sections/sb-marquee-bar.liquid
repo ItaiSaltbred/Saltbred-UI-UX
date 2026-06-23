@@ -1,0 +1,82 @@
+<div class="sb-marquee-wrap" id="sbs-{{ section.id }}">
+  <div class="sb-marquee-track">
+    <div class="sb-marquee-inner" aria-hidden="true">
+      {%- assign items = section.settings.text | split: '·' -%}
+      {%- for i in (1..6) -%}
+        {%- for item in items -%}
+          <span class="sb-marquee-item">{{ item | strip }}</span>
+          <span class="sb-marquee-dot">·</span>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+    <div class="sb-marquee-inner" aria-hidden="true">
+      {%- for i in (1..6) -%}
+        {%- for item in items -%}
+          <span class="sb-marquee-item">{{ item | strip }}</span>
+          <span class="sb-marquee-dot">·</span>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  #sbs-{{ section.id }} {
+    background: #c8a96e;
+    overflow: hidden;
+    padding: 12px 0;
+  }
+  #sbs-{{ section.id }} .sb-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: sb-scroll {{ section.settings.speed }}s linear infinite;
+  }
+  #sbs-{{ section.id }}:hover .sb-marquee-track { animation-play-state: paused; }
+  #sbs-{{ section.id }} .sb-marquee-inner {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  #sbs-{{ section.id }} .sb-marquee-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.18em;
+    color: #fff;
+    padding: 0 18px;
+  }
+  #sbs-{{ section.id }} .sb-marquee-dot {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+  }
+  @keyframes sb-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "SB — Marquee Bar",
+  "tag": "div",
+  "class": "sb-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Marquee items (separate with ·)",
+      "default": "FREE SHIPPING OVER $75 · UPF 50+ PROTECTION · NAKEDSKIN™ TECHNOLOGY · BUILT FOR THE SALT · COASTAL PERFORMANCE GEAR · EASY RETURNS"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Scroll speed (seconds)",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "default": 35
+    }
+  ],
+  "presets": [{ "name": "SB — Marquee Bar" }]
+}
+{% endschema %}
