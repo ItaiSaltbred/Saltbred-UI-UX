@@ -1,0 +1,153 @@
+<section class="sb-hero" id="sbs-{{ section.id }}">
+  <div class="sb-hero__bg">
+    {%- if section.settings.image != blank -%}
+      <img
+        srcset="{{ section.settings.image | image_url: width: 750 }} 750w,
+                {{ section.settings.image | image_url: width: 1100 }} 1100w,
+                {{ section.settings.image | image_url: width: 1600 }} 1600w,
+                {{ section.settings.image | image_url: width: 2400 }} 2400w"
+        sizes="100vw"
+        src="{{ section.settings.image | image_url: width: 1600 }}"
+        alt="{{ section.settings.heading | escape }}"
+        loading="eager"
+        fetchpriority="high"
+        class="sb-hero__img"
+      >
+    {%- else -%}
+      <div class="sb-hero__placeholder"></div>
+    {%- endif -%}
+  </div>
+  <div class="sb-hero__overlay"></div>
+  <div class="sb-hero__inner">
+    <div class="sb-hero__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="sb-hero__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h1 class="sb-hero__heading">{{ section.settings.heading | newline_to_br }}</h1>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="sb-hero__sub">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+      <div class="sb-hero__btns">
+        {%- if section.settings.btn1_label != blank -%}
+          <a href="{{ section.settings.btn1_url }}" class="sb-cta sb-cta--light">{{ section.settings.btn1_label }}</a>
+        {%- endif -%}
+        {%- if section.settings.btn2_label != blank -%}
+          <a href="{{ section.settings.btn2_url }}" class="sb-cta sb-cta--ghost">{{ section.settings.btn2_label }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #sbs-{{ section.id }} {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 88px;
+  }
+  #sbs-{{ section.id }} .sb-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  #sbs-{{ section.id }} .sb-hero__img,
+  #sbs-{{ section.id }} .sb-hero__placeholder {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  #sbs-{{ section.id }} .sb-hero__placeholder { background: #0d1f2d; }
+  #sbs-{{ section.id }} .sb-hero__overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      linear-gradient(to right, rgba(5,15,25,0.88) 0%, rgba(5,15,25,0.55) 38%, rgba(5,15,25,0.1) 70%, transparent 100%),
+      linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 45%);
+  }
+  #sbs-{{ section.id }} .sb-hero__inner {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 1280px;
+    margin: 0 auto; padding: 0 56px;
+  }
+  #sbs-{{ section.id }} .sb-hero__content { max-width: 660px; }
+  #sbs-{{ section.id }} .sb-hero__eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: #c8a96e; margin-bottom: 18px;
+  }
+  #sbs-{{ section.id }} .sb-hero__heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(78px, 12vw, 160px);
+    line-height: 0.86; color: #fff;
+    margin-bottom: 28px; letter-spacing: 0.01em;
+  }
+  #sbs-{{ section.id }} .sb-hero__sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px; font-weight: 300;
+    color: rgba(255,255,255,0.7); line-height: 1.75;
+    margin-bottom: 44px; max-width: 440px;
+  }
+  #sbs-{{ section.id }} .sb-hero__btns {
+    display: flex; gap: 14px; flex-wrap: wrap;
+  }
+  /* Shared CTA button styles */
+  .sb-cta {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    text-decoration: none; padding: 17px 38px;
+    border-radius: 0; transition: all 0.22s ease;
+    cursor: pointer; border: 1px solid transparent;
+  }
+  .sb-cta--light { background: #fff; color: #111; border-color: #fff; }
+  .sb-cta--light:hover { background: #c8a96e; border-color: #c8a96e; color: #fff; }
+  .sb-cta--ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,0.55); }
+  .sb-cta--ghost:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+  .sb-cta--dark { background: #111; color: #fff; border-color: #111; }
+  .sb-cta--dark:hover { background: #0d1f2d; border-color: #0d1f2d; }
+  .sb-cta--gold { background: #c8a96e; color: #fff; border-color: #c8a96e; }
+  .sb-cta--gold:hover { background: #b8996a; border-color: #b8996a; }
+  .sb-cta--outline { background: transparent; color: #111; border-color: #111; }
+  .sb-cta--outline:hover { background: #111; color: #fff; }
+
+  @media (max-width: 749px) {
+    #sbs-{{ section.id }} {
+      min-height: 100svh;
+      align-items: flex-end;
+      padding-bottom: 56px;
+    }
+    #sbs-{{ section.id }} .sb-hero__inner { padding: 0 20px; }
+    #sbs-{{ section.id }} .sb-hero__content { max-width: 100%; }
+    #sbs-{{ section.id }} .sb-hero__heading { font-size: clamp(64px, 18vw, 100px); }
+    #sbs-{{ section.id }} .sb-hero__overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.18) 100%);
+    }
+    #sbs-{{ section.id }} .sb-hero__sub { max-width: 100%; font-size: 15px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "SB — Hero",
+  "tag": "div",
+  "class": "sb-section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Coastal Performance Gear" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "BUILT FOR\nTHE SALT" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Performance gear engineered for life on the water." },
+    { "type": "text", "id": "btn1_label", "label": "Button 1 label", "default": "SHOP NOW" },
+    { "type": "url", "id": "btn1_url", "label": "Button 1 URL" },
+    { "type": "text", "id": "btn2_label", "label": "Button 2 label", "default": "NAKEDSKIN™ TECH" },
+    { "type": "url", "id": "btn2_url", "label": "Button 2 URL" }
+  ],
+  "presets": [{ "name": "SB — Hero" }]
+}
+{% endschema %}
