@@ -1,0 +1,27 @@
+{%- doc -%}
+  Renders a stock indicator badge on product cards.
+  Green = In Stock, Yellow = Low Stock, Red = Out of Stock / Very Low
+  @param {object} product - The product object
+{%- enddoc -%}
+
+{%- liquid
+  assign total_inv = product.total_inventory
+  if product.available == false or total_inv == 0
+    assign sb_status = 'out'
+    assign sb_label = 'Out of Stock'
+  elsif total_inv <= 10
+    assign sb_status = 'low'
+    assign sb_label = 'Low Stock'
+  elsif total_inv <= 20
+    assign sb_status = 'low'
+    assign sb_label = 'Low Stock'
+  else
+    assign sb_status = 'in'
+    assign sb_label = 'In Stock'
+  endif
+-%}
+
+<div class="sb-stock-badge sb-stock-badge--{{ sb_status }}" aria-label="{{ sb_label }}">
+  <span class="sb-stock-badge__dot"></span>
+  <span>{{ sb_label }}</span>
+</div>
