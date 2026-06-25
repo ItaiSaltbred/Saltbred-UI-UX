@@ -246,24 +246,6 @@
           },
           "blocks": {}
         },
-        "ai_gen_block_54f3abe_wPRjPp": {
-          "type": "ai_gen_block_54f3abe",
-          "disabled": true,
-          "settings": {
-            "marquee_text": "FATHERS DAY SALE CLICK HERE ⬅️",
-            "destination_url": "shopify://pages/fathers-day-sale",
-            "scroll_speed": 55,
-            "background_color": "#000000",
-            "text_color": "#ffffff",
-            "font_family": "anton_n4",
-            "font_size": 32,
-            "letter_spacing": 1,
-            "uppercase": true,
-            "vertical_padding": 8,
-            "text_spacing": 20
-          },
-          "blocks": {}
-        },
         "ai_gen_block_ab556ed_ke938B": {
           "type": "ai_gen_block_ab556ed",
           "disabled": true,
@@ -290,7 +272,6 @@
         "image_d8tBDq",
         "ai_gen_block_ab556ed_y4YNJM",
         "image_KxkBKU",
-        "ai_gen_block_54f3abe_wPRjPp",
         "ai_gen_block_ab556ed_ke938B"
       ],
       "name": "t:names.image_with_text",
