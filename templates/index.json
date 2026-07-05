@@ -507,9 +507,7 @@
           "coastal-snapback",
           "all-products",
           "t-shirts",
-          "cotton-hoodies",
-          "decals",
-          "bottles-tumblers"
+          "cotton-hoodies"
         ],
         "layout_type": "grid",
         "carousel_on_mobile": false,
