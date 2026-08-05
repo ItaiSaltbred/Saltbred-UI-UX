@@ -121,6 +121,14 @@
         "type": "shopify://apps/smart-discounts/blocks/embed/019d1c1c-2c4b-704e-be88-ea7fd20c9afb",
         "disabled": false,
         "settings": {}
+      },
+      "14391867418331573003": {
+        "type": "shopify://apps/goalify-upsell-goals/blocks/progress-bar-embed/0834dd64-6591-4dfa-9cc4-bbb7ef032eed",
+        "disabled": true,
+        "settings": {
+          "n99gb_embed_css": "/* CSS Rules */",
+          "n99gb_embed_js": "/* JS Code */"
+        }
       }
     },
     "color_schemes": {
